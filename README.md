@@ -19,7 +19,10 @@
 
 4. Acesse a documentação da API (Swagger):
    [http://localhost:5000/swagger/index.html](http://localhost:5000/swagger/index.html)
-5. Conecte-se com o banco 
+   # Esses são os ids das classes disponíveis
+   ![image](https://github.com/user-attachments/assets/9f398dfe-3b75-441b-b8dd-7fa7febc3008)
+
+6. Conecte-se com o banco 
   
       ```bash
     Nome do servidor: localhost,1433
