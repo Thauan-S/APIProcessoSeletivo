@@ -11,12 +11,10 @@ namespace APIMatriculaAlunos.Services
     {
         private readonly IStudentRepository _repository;
         private readonly IClassRepository _classRepository;
-        private readonly ISecurityUtils _securityUtils;
-        public StudentService(IStudentRepository repository, IClassRepository classRepository , ISecurityUtils securityUtils)
+        public StudentService(IStudentRepository repository, IClassRepository classRepository = null)
         {
             _repository = repository;
             _classRepository = classRepository;
-            _securityUtils = securityUtils;
         }
 
         public async Task<Result<List<StudentDto>>> GetAllAsync(PaginationParameters paginationParameters)
@@ -60,11 +58,8 @@ namespace APIMatriculaAlunos.Services
             var studentDb = await _repository.GetByIdAsync(id);
             if (studentDb ==null)
                 return Result<StudentDto>.Fail("Aluno não cadastrado na base de dados ");
-            _securityUtils.VerifyOwnerShip(studentDb.Id.ToString());
+            SecurityUtils.VerifyOwnerShip(studentDb.Id.ToString());
 
-            var classExists = await _classRepository.ClassExists(student.ClassId);
-            if (!classExists)
-                return Result<StudentDto>.Fail("Classe não existe na base de dados");
             studentDb.Name = student.Name;
             studentDb.Age = student.Age;
             studentDb.ClassId = student.ClassId;
@@ -83,7 +78,7 @@ namespace APIMatriculaAlunos.Services
             if (studentDb == null)
                 return Result<StudentDto>.Fail("Student not exists");
 
-            _securityUtils.VerifyOwnerShip(studentDb.Id.ToString());
+            SecurityUtils.VerifyOwnerShip(studentDb.Id.ToString());
            
             await _repository.DeleteAsync(id);
             return Result<StudentDto>.Ok(new StudentDto { });
