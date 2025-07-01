@@ -1,5 +1,5 @@
 # APIProcessoSeletivo
-
+![Descrição da imagem](Swagger.png)
 ## Passos para rodar o projeto
 
 1. Clone o repositório e acesse a pasta do projeto:
