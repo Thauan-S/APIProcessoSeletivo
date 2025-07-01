@@ -1,0 +1,4 @@
+IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = N'API')
+BEGIN
+    CREATE DATABASE [API];
+END

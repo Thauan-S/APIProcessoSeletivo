@@ -1,6 +1,10 @@
-﻿namespace APIMatriculaAlunos.Utils
+﻿using APIMatriculaAlunos.Middlewares.Exceptions;
+
+namespace APIMatriculaAlunos.Utils
 {
-    public class SecurityUtils
+
+
+    public class SecurityUtils : ISecurityUtils
     {
         private static IHttpContextAccessor _httpContextAccessor;
 
@@ -9,7 +13,7 @@
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public static void VerifyOwnerShip(string resourceOwnerId)
+        public void VerifyOwnerShip(string resourceOwnerId)
         {
             var user = _httpContextAccessor.HttpContext?.User;
             if (user == null || !user.Identity.IsAuthenticated)
@@ -20,7 +24,7 @@
             var userId = user.FindFirst("studentId")?.Value;
             if (userId != resourceOwnerId)
             {
-                throw new UnauthorizedAccessException("User does not own this resource.");
+                throw new UserNotOwnerException();
             }
         }
     }

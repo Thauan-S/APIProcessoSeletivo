@@ -1,13 +1,12 @@
-﻿
-
-using APIMatriculaAlunos.Entities;
+﻿using APIMatriculaAlunos.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Tropical.Infrastructure.Data
+namespace APIMatriculaAlunos.Context
 {
-    public class AppDbContext:DbContext
+    public class AppDbContext : DbContext
     {
-        public AppDbContext(DbContextOptions options) :base(options) { }
+        public AppDbContext(DbContextOptions options) : base(options) { }
         public DbSet<Student> Students { get; set; }
+        public DbSet<Class> Classes { get; set; }
     }
 }

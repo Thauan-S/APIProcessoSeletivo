@@ -1,0 +1,44 @@
+version: "3.9"
+
+services:
+  apialunos:
+    build:
+      context: . 
+      dockerfile: ./APIMatriculaAlunos/Dockerfile
+    ports:
+      - "5000:8080"
+    depends_on:
+      sqledge:
+        condition: service_healthy
+    networks:
+      - api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+
+  sqledge:
+    container_name: "sqledge"
+    image: "mcr.microsoft.com/azure-sql-edge:latest"
+    ports:
+      - "1433:1433"
+    networks:
+      - api
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "Admin123@"
+    volumes:
+      - ./sql/init:/init-scripts
+    healthcheck:
+      test: [ "CMD", "/opt/mssql-tools/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "Admin123@", "-Q", "SELECT 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    command: >
+      bash -c "
+      /opt/mssql/bin/sqlservr &
+      sleep 20 &&
+      /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P Admin123@ -i /init-scripts/init.sql &&
+      tail -f /dev/null
+      "
+
+networks:
+  api:

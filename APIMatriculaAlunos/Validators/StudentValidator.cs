@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using APIMatriculaAlunos.Entities;
+using Microsoft.AspNetCore.Identity;
 
 namespace APIMatriculaAlunos.Validators
 {
@@ -7,17 +8,30 @@ namespace APIMatriculaAlunos.Validators
     {
         public StudentValidator()
         {
-            RuleFor(x => x.Name)
+            RuleFor(student => student.Name)
                 .NotEmpty().WithMessage("O nome do aluno  é obrigatório.");
 
-            RuleFor(x => x.Age)
+            RuleFor(student => student.Age)
                 .GreaterThan(0).WithMessage("A idade deve ser maior que zero.");
 
-            RuleFor(x => x.ResponsibleName)
+            RuleFor(student => student.ResponsibleName)
                 .NotEmpty().WithMessage("O nome do responsável é obrigatório.");
 
-            RuleFor(x => x.ClassId)
+            RuleFor(student => student.ClassId)
                 .NotEmpty().WithMessage("A turma  do aluno deve ser informada");
+
+            RuleFor(student => student.Email).NotEmpty().WithMessage("insira um email");
+            RuleFor(student => student.Password).NotEmpty().WithMessage("insira uma senha");
+
+            RuleFor(student => student.Password)
+            .NotEmpty().WithMessage("Insira uma senha.")
+            .MinimumLength(7).WithMessage("A senha deve ter no mínimo 7 caracteres.");
+
+            When(user => string.IsNullOrEmpty(user.Email) == false, () =>
+            { 
+                RuleFor(user => user.Email).EmailAddress().WithMessage("Email inválido");
+            });
+
         }
     }
 }

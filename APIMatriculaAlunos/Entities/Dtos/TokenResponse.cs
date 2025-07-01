@@ -1,4 +1,4 @@
-﻿namespace APIMatriculaAlunos.Entities
+﻿namespace APIMatriculaAlunos.Entities.Dtos
 {
     public class TokenResponse
     {

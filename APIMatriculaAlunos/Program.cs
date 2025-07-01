@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Tropical.Infrastructure.Data;
 using APIMatriculaAlunos.Repositories;
 using APIMatriculaAlunos.Services;
 using Microsoft.OpenApi.Models;
@@ -9,10 +8,12 @@ using System.Text;
 using APIMatriculaAlunos.Utils;
 using Microsoft.AspNetCore.Mvc.Filters;
 using APIMatriculaAlunos.NewFolder;
+using APIMatriculaAlunos.Entities;
+using APIMatriculaAlunos.Context;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+Console.WriteLine("Ambiente: " + builder.Environment.EnvironmentName);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -23,11 +24,14 @@ builder.Services.AddSwaggerGen(options =>
     var xmlPath = System.IO.Path.Combine(AppContext.BaseDirectory, xmlFile);
     options.IncludeXmlComments(xmlPath);
 });
+
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped<IStudentRepository,StudentRepository>();
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<ITokenService,JwtTokenService>();
+builder.Services.AddScoped<IClassRepository, ClassRepository>();
+builder.Services.AddSingleton<ISecurityUtils, SecurityUtils>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddMvc(options => options.Filters.Add(typeof(ExceptionMiddleware)));
 builder.Services.AddSwaggerGen(c =>
@@ -36,11 +40,11 @@ builder.Services.AddSwaggerGen(c =>
 
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Description = "Informe o token JWT no formato: Bearer seuToken",
+        Description = "Informe o token JWT ",
         Name = "Authorization",
         In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer"
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer"
     });
 
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -81,6 +85,18 @@ builder.Services.AddAuthentication(options =>
 
 
 var app = builder.Build();
+using var scope = app.Services.CreateScope();
+var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+context.Database.Migrate();
+if (!context.Classes.Any())
+{
+    context.Classes.AddRange(
+        new Class {  Name = "Classe A" },
+        new Class {  Name = "Classe B" },
+        new Class {  Name = "Classe C" }
+    );
+    context.SaveChanges();
+}
 
 SecurityUtils.Configure(app.Services.GetRequiredService<IHttpContextAccessor>());
 // Configure the HTTP request pipeline.
