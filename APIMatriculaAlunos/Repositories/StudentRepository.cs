@@ -1,7 +1,7 @@
+using APIMatriculaAlunos.Context;
 using APIMatriculaAlunos.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Tropical.Infrastructure.Data;
 
 namespace APIMatriculaAlunos.Repositories
 {
@@ -16,6 +16,7 @@ namespace APIMatriculaAlunos.Repositories
         public async Task<List<Student>> GetAllAsync(PaginationParameters paginationParameters)
         {
             return await _context.Students.AsNoTracking()
+                .Include(s=>s.Class)
                 .Skip((paginationParameters.Page - 1) * paginationParameters.PageSize)
                 .OrderByDescending(student => student.Id)
                 .Take(paginationParameters.PageSize)
@@ -25,7 +26,7 @@ namespace APIMatriculaAlunos.Repositories
 
         public async Task<Student?> GetByIdAsync(int id)
         {
-            return await _context.Students.FindAsync(id);
+            return await _context.Students.Include(s=>s.Class).FirstOrDefaultAsync(s=> s.Id==id);
         }
 
         public async Task AddAsync(Student student)
@@ -48,6 +49,11 @@ namespace APIMatriculaAlunos.Repositories
                 _context.Students.Remove(student);
                 await _context.SaveChangesAsync();
             }
+        }
+
+        public Task<Student?> GetByEmailAsync(string email)
+        {
+            return _context.Students.FirstOrDefaultAsync(s => s.Email.Equals(email));
         }
     }
 } 

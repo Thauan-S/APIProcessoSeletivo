@@ -2,10 +2,10 @@ namespace APIMatriculaAlunos.Entities
 {
     public class Result<T>
     {
-        // Criei esta classe de resultados para evitar o lanÁamento de exceÁıes em casos de erro controlado.
-        // A classe Result encapsula o resultado de uma operaÁ„o, indicando se foi bem-sucedida, os dados retornados e, se aplic·vel, uma mensagem de erro.
-        // LanÁar exceÁıes, por exemplo, quando um dado n„o È encontrado no banco de dados, pode gerar sobrecarga de processamento (overhead),
-        // alÈm de n„o representar necessariamente uma falha inesperada.
+        // Criei esta classe de resultados para evitar o lan√ßamento de exce√ß√µes em casos de erro controlado.
+        // A classe Result encapsula o resultado de uma opera√ß√£o, indicando se foi bem-sucedida, os dados retornados e, se aplic√°vel, uma mensagem de erro.
+        // Lan√ßar exce√ß√µes, por exemplo, quando um dado n√£o √© encontrado no banco de dados, pode gerar sobrecarga de processamento (overhead),
+        // al√©m de n√£o representar necessariamente uma falha inesperada.
         public bool Success { get; }
         public T? Data { get; }
         public string? Error { get; }
