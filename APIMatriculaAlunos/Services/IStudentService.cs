@@ -8,6 +8,7 @@ namespace APIMatriculaAlunos.Services
     {
         Task<Result<List<Student>>> GetAllAsync(PaginationParameters paginationParameters);
         Task<Result<Student>> GetByIdAsync(int id);
+        Task<Result<Student>> GetByEmailAsync(string  email);
         Task AddAsync(Student student);
         Task UpdateAsync(Student student);
         Task DeleteAsync(int id);

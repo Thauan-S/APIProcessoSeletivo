@@ -10,5 +10,9 @@ namespace APIMatriculaAlunos.Entities
         public int Age { get; set; }
         public string ResponsibleName { get; set; } = string.Empty;
         public int ClassId { get; set; }
+
+        // propriedades adicionais , não são obrigatórias no processo seletivo, mas quis dar um plus
+        public string Email { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
     }
 }

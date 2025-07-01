@@ -49,5 +49,10 @@ namespace APIMatriculaAlunos.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+
+        public Task<Student?> GetByEmailAsync(string email)
+        {
+            return _context.Students.FirstOrDefaultAsync(s => s.Email.Equals(email));
+        }
     }
 } 

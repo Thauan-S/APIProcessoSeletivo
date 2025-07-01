@@ -1,5 +1,7 @@
 using APIMatriculaAlunos.Entities;
 using APIMatriculaAlunos.Repositories;
+using APIMatriculaAlunos.Utils;
+using BCrypt.Net;
 
 
 namespace APIMatriculaAlunos.Services
@@ -30,17 +32,29 @@ namespace APIMatriculaAlunos.Services
 
         public async Task AddAsync(Student student)
         {
+            student.Password= BCrypt.Net.BCrypt.HashPassword(student.Password);
             await _repository.AddAsync(student);
         }
 
         public async Task UpdateAsync(Student student)
         {
+            var studentDb = await _repository.GetByIdAsync(student.Id);
+            SecurityUtils.VerifyOwnerShip(studentDb.Id.ToString());
             await _repository.UpdateAsync(student);
         }
 
         public async Task DeleteAsync(int id)
         {
             await _repository.DeleteAsync(id);
+        }
+
+        public async Task<Result<Student>> GetByEmailAsync(string email)
+        {
+            //return await _repository.GetByEmailAsync(email);
+            var result = await _repository.GetByEmailAsync(email);
+            if (result == null)
+                return Result<Student>.Fail("Erro ao buscar email.");
+            return Result<Student>.Ok(result);
         }
     }
 } 

@@ -3,10 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 using APIMatriculaAlunos.Services;
 using APIMatriculaAlunos.Validators;
 using System.Net.Mime;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace APIMatriculaAlunos.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("[controller]")]
     public class StudentController : ControllerBase
     {
@@ -44,6 +47,7 @@ namespace APIMatriculaAlunos.Controllers
             return Ok(result.Data);
         }
 
+        [AllowAnonymous]
         [HttpPost]
         [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(Student), StatusCodes.Status201Created)]
@@ -57,7 +61,7 @@ namespace APIMatriculaAlunos.Controllers
 
             await _service.AddAsync(student);
 
-            return CreatedAtAction(nameof(GetById), new { id = student.ClassId }, student);
+            return Created();
         }
 
         [HttpPut("{id}")]
